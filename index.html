@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>КрутоРоллы</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Roboto:wght@300&display=swap');
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3e6d4; /* Светло-бежевый фон */
+            color: #333;
+        }
+
+        header {
+            background: url('https://avatars.mds.yandex.net/get-altay/5517178/2a0000018104a6910485b0ee2463016212bc/XXL_height') no-repeat center center;
+            background-size: cover;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-radius: 0 0 20px 20px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-family: 'Pacifico', cursive;
+            font-size: 3em;
+            letter-spacing: 1px;
+            line-height: 1.2;
+        }
+
+        header .city {
+            font-size: 20px; /* Размер шрифта для названия города */
+            font-weight: 300; /* Тонкий шрифт */
+            line-height: 1.2; /* Высота строки */
+            margin-top: 10px; /* Отступ сверху */
+            display: inline-block; /* Чтобы добавить геосимвол */
+        }
+
+        header .geo-symbol {
+            margin-right: 5px; /* Отступ вправо от геосимвола */
+        }
+
+        main {
+            padding: 20px;
+        }
+
+        .welcome {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .review-form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .review-form:hover {
+            transform: scale(1.02);
+        }
+
+        .review-form input, .review-form textarea, .review-form button {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-sizing: border-box;
+        }
+
+        .review-form button {
+            background-color: #c8553d;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .review-form button:hover {
+            background-color: #a7442d;
+        }
+
+        .rating {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .star {
+            font-size: 1.5em;
+            color: #ccc;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .star.filled {
+            color: #ffc107;
+        }
+
+        .reviews {
+            max-width: 600px;
+            margin: 20px auto;
+            padding-top: 20px;
+        }
+
+        .reviews h3 {
+            margin-bottom: 10px;
+        }
+
+        .reviews-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .review {
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+			
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .review img {
+            width: 100px;
+            height: 100px;
+            border-radius: 15px;
+            object-fit: cover;
+        }
+
+        .review p {
+            margin: 0;
+        }
+
+        /* Модальная часть для пароля и сообщений */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            position: relative;
+        }
+
+        .modal input {
+            width: calc(100% - 20px);
+            margin: 10px auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+
+        .modal button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #c8553d;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        /* Крестик для закрытия модального окна */
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #c8553d;
+        }
+
+        /* Адаптивные стили для мобильных устройств */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5em;
+            }
+
+            .review-form {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            .review-form {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>КрутоРоллы</h1>
+    <div>
+        <span class="geo-symbol">📍</span>
+        <span class="city">Михайловск</span>
+    </div>
+</header>
+
+<main>
+    <div class="welcome">
+        <h2>Спасибо <span id="password-trigger" style="cursor: pointer;">за</span> заказ и за отзыв, нам важно ваше мнение!</h2>
+    </div>
+
+    <div class="review-form">
+        <input type="text" id="name" placeholder="Ваше имя" required>
+        <div class="rating" id="rating">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="5">★</span>
+        </div>
+        <textarea id="review-text" placeholder="Ваш отзыв" rows="5" required></textarea>
+        <input type="file" id="image" accept="image/*">
+        <button id="submit-review">Отправить</button>
+    </div>
+
+    <div class="reviews">
+        <h3>Отзывы</h3>
+        <div class="reviews-list" id="reviews-list"></div>
+    </div>
+</main>
+
+<!-- Модальное окно для ввода пароля при отправке отзыва -->
+<div class="modal" id="submit-password-modal">
+    <div class="modal-content">
+        <button class="close-btn" id="close-submit-password-modal">&times;</button>
+        <h3>Введите пароль для отправки отзыва</h3>
+        <input type="password" id="submit-password-input" placeholder="Пароль" required>
+        <button id="confirm-submit-password">Подтвердить</button>
+    </div>
+</div>
+
+<!-- Модальное окно для ввода пароля для очистки отзывов -->
+<div class="modal" id="clear-password-modal">
+    <div class="modal-content">
+        <button class="close-btn" id="close-clear-password-modal">&times;</button>
+        <h3>Введите пароль для очистки истории отзывов</h3>
+        <input type="password" id="clear-password-input" placeholder="Пароль" required>
+        <button id="confirm-clear-password">Подтвердить</button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const reviewsList = document.getElementById('reviews-list');
+        const submitButton = document.getElementById('submit-review');
+        const clearPasswordModal = document.getElementById('clear-password-modal');
+        const submitPasswordModal = document.getElementById('submit-password-modal');
+        const closeSubmitPasswordModalButton = document.getElementById('close-submit-password-modal');
+        const closeClearPasswordModalButton = document.getElementById('close-clear-password-modal');
+        const confirmSubmitPasswordButton = document.getElementById('confirm-submit-password');
+        const confirmClearPasswordButton = document.getElementById('confirm-clear-password');
+        const passwordTrigger = document.getElementById('password-trigger');
+        
+        let starRating = 0; // Оценка изначально равна 0
+        let tempReviewData = {}; // Временные данные отзыва
+
+        // Загрузка данных из localStorage
+        const loadReviews = () => {
+            const savedReviews = JSON.parse(localStorage.getItem('reviews')) || [];
+            savedReviews.forEach(review => addReviewElement(review));
+        };
+
+        // Добавляем отзыв на страницу
+        const addReviewElement = (review) => {
+            const reviewDiv = document.createElement('div');
+            reviewDiv.classList.add('review');
+
+            const img = document.createElement('img');
+            img.src = review.image;
+            img.alt = "Отзыв от " + review.name;
+
+            const contentDiv = document.createElement('div');
+            const name = document.createElement('p');
+            name.textContent = review.name;
+            const rating = document.createElement('p');
+            rating.textContent = `Оценка: ${review.rating} звёзд`;
+            const text = document.createElement('p');
+            text.textContent = review.text;
+
+            contentDiv.appendChild(name);
+            contentDiv.appendChild(rating);
+            contentDiv.appendChild(text);
+            reviewDiv.appendChild(img);
+            reviewDiv.appendChild(contentDiv);
+            reviewsList.appendChild(reviewDiv);
+        };
+
+        // Закрытие модального окна для ввода пароля при отправке отзыва
+        closeSubmitPasswordModalButton.addEventListener('click', () => {
+            submitPasswordModal.style.display = 'none';
+        });
+
+        // Подтверждение пароля для отправки отзыва
+        confirmSubmitPasswordButton.addEventListener('click', () => {
+            if (document.getElementById('submit-password-input').value === "15") {
+                const savedReviews = JSON.parse(localStorage.getItem('reviews')) || [];
+                savedReviews.push(tempReviewData);
+                localStorage.setItem('reviews', JSON.stringify(savedReviews)); // Сохраняем отзывы
+
+                // Отображаем отзыв
+                addReviewElement(tempReviewData);
+                submitPasswordModal.style.display = 'none'; // Закрываем окно
+
+                // Сбрасываем форму
+                resetReviewForm();
+            } else {
+                alert("Неверный пароль. Попробуйте еще раз.");
+            }
+			
+            document.getElementById('submit-password-input').value = ''; // Сбрасываем поле ввода пароля
+        });
+
+        // Закрытие модального окна для очистки отзывов
+        closeClearPasswordModalButton.addEventListener('click', () => {
+            clearPasswordModal.style.display = 'none';
+        });
+
+        // Подтверждение пароля для очистки отзывов
+        confirmClearPasswordButton.addEventListener('click', () => {
+            if (document.getElementById('clear-password-input').value === "0710") {
+                localStorage.removeItem('reviews'); // Очищаем историю отзывов
+                reviewsList.innerHTML = ''; // Убираем отзывы из UI
+                clearPasswordModal.style.display = 'none'; // Закрываем модальное окно
+            } else {
+                alert("Неверный пароль. Попробуйте еще раз.");
+            }
+            document.getElementById('clear-password-input').value = ''; // Сбрасываем поле ввода пароля
+        });
+
+        // Обработка нажатия кнопки "Отправить"
+        submitButton.addEventListener('click', () => {
+            const nameInput = document.getElementById('name').value;
+            const reviewText = document.getElementById('review-text').value;
+            const imageInput = document.getElementById('image').files[0];
+            
+            if (nameInput && reviewText) {
+                tempReviewData = {
+                    name: nameInput,
+                    text: reviewText,
+                    image: '', // Это будет заполнено после загрузки изображения
+                    rating: starRating
+                };
+
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    tempReviewData.image = reader.result; // Сохраняем данные изображения
+                    openSubmitPasswordModal(); // Открываем окно для ввода пароля
+                };
+                
+                if (imageInput) {
+                    reader.readAsDataURL(imageInput);
+                } else {
+                    tempReviewData.image = 'https://via.placeholder.com/100'; // Заглушка для отсутствующего изображения
+                    openSubmitPasswordModal(); // Открываем окно для ввода пароля
+                }
+            } else {
+                alert("Заполните все поля и выберите оценку!");
+            }
+        });
+
+        const openSubmitPasswordModal = () => {
+            submitPasswordModal.style.display = 'flex'; // Открываем окно для ввода пароля
+        };
+
+        // Функция для сброса формы отзыва
+        const resetReviewForm = () => {
+            document.getElementById('name').value = '';
+            document.getElementById('review-text').value = '';
+            document.getElementById('image').value = '';
+            starRating = 0; // Сбрасываем оценку
+            updateStarDisplay(); // Обновляем отображение звезд
+        };
+
+        // Обновление отображения звезд
+        const ratingStars = document.querySelectorAll('.star');
+        ratingStars.forEach(star => {
+            star.addEventListener('click', () => {
+                starRating = star.dataset.value; // Получаем значение оценки
+                updateStarDisplay();
+            });
+        });
+
+        const updateStarDisplay = () => {
+            ratingStars.forEach(star => {
+                star.classList.remove('filled');
+                if (star.dataset.value <= starRating) {
+                    star.classList.add('filled');
+                }
+            });
+        };
+
+        // Загрузка отзывов при загрузке страницы
+        loadReviews();
+
+        // Обработчик клика на слово "за"
+        passwordTrigger.addEventListener('click', () => {
+		
+            clearPasswordModal.style.display = 'flex'; // Открыть окно для ввода пароля
+        });
+    });
+</script>
+
+</body>
+</html>
+
